@@ -6,7 +6,8 @@ const nextConfig = {
 };
 
 module.exports = {
-    experimental: {
+  reactStrictMode: true,  
+  experimental: {
       concurrentFeatures: true,
       serverComponents: true,
     },

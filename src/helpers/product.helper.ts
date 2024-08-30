@@ -1,7 +1,11 @@
 import IProduct from "@/interfaces/Products"
 import { promises } from "dns"
 
-const APIURL = process.env.NEXT_PUBLIC_API_URL
+
+const APIURL = process.env.NEXT_PUBLIC_API_URL;
+if (!APIURL) {
+  throw new Error("API base URL is not defined");
+}
 
 export async function getProducts(): Promise<IProduct[]> {
     try {

@@ -1,11 +1,7 @@
 import IProduct from "@/interfaces/Products"
 import { promises } from "dns"
 
-
-const APIURL = process.env.NEXT_PUBLIC_API_URL;
-if (!APIURL) {
-  throw new Error("API base URL is not defined");
-}
+const APIURL = process.env.NEXT_PUBLIC_API_URL
 
 export async function getProducts(): Promise<IProduct[]> {
     try {
@@ -18,16 +14,14 @@ export async function getProducts(): Promise<IProduct[]> {
         throw new Error(error)
     }
 };
-export async function getProductsById(id: string): Promise<IProduct | null> {
+
+export async function getProductsById(id: string): Promise<IProduct> {
     try {
-        const products: IProduct[] = await getProducts();
-        const productFilter = products.find((product) => product.id.toString() === id);
-        
-        if (!productFilter) return null; // Retorna null si no se encuentra el producto
-        
+        const products: IProduct[] = await getProducts()
+        const productFilter = products.find((product) => product.id.toString() === id)
+        if (!productFilter) throw new Error('Not Founded')
         return productFilter;
-    } catch (error) {
-        console.error('Error fetching product:', error);
-        return null; // Retorna null en caso de error
+    } catch (error: any) {
+        throw new Error(error)
     }
-}
+};

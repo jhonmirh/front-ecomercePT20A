@@ -2,27 +2,17 @@ import { getProductsById } from "@/helpers/product.helper";
 import React from "react";
 import ProductId from "@/components/ProductId/ProductId";
 import DetailProductProps from "./[productId]/types";
+import DatailProduct from "./[productId]/page";
 
 
-
-const productById: React.FC<DetailProductProps> = async ({ params }) => {
+const ProductById: React.FC<DetailProductProps> = async ({ params }) => {
   const { productId } = params;
   const product = await getProductsById(productId);
-
-  if (!product) {
-      return (
-          <div>
-              <h1>Product Not Found</h1>
-          </div>
-      );
-  }
-
   return (
-      <div>
-          <ProductId {...product} />
-      </div>
+    <div>
+      <ProductId {...product} />
+    </div>
   );
 };
 
-
-export default productById;
+export default ProductById;

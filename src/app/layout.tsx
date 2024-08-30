@@ -52,7 +52,7 @@ async function getNavBarData() {
     const products = await getProducts();
     return products.map((product) => ({
       src: product.image, 
-      link: `/product/${product.id}`, 
+      link: `/product/${product.categoryId}`, 
     }));
   } catch (error) {
     console.error('Error fetching products:', error);

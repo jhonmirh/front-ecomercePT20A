@@ -14,14 +14,16 @@ export async function getProducts(): Promise<IProduct[]> {
         throw new Error(error)
     }
 };
-
-export async function getProductsById(id: string): Promise<IProduct> {
+export async function getProductsById(id: string): Promise<IProduct | null> {
     try {
-        const products: IProduct[] = await getProducts()
-        const productFilter = products.find((product) => product.id.toString() === id)
-        if (!productFilter) throw new Error('Not Founded')
+        const products: IProduct[] = await getProducts();
+        const productFilter = products.find((product) => product.id.toString() === id);
+        
+        if (!productFilter) return null; 
+        
         return productFilter;
-    } catch (error: any) {
-        throw new Error(error)
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        return null; 
     }
-};
+}

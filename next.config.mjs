@@ -5,4 +5,12 @@ const nextConfig = {
     },
 };
 
+module.exports = {
+    experimental: {
+      concurrentFeatures: true,
+      serverComponents: true,
+    },
+  };
+
+  
 export default nextConfig;

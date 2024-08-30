@@ -19,11 +19,11 @@ export async function getProductsById(id: string): Promise<IProduct | null> {
         const products: IProduct[] = await getProducts();
         const productFilter = products.find((product) => product.id.toString() === id);
         
-        if (!productFilter) return null; 
+        if (!productFilter) return null; // Retorna null si no se encuentra el producto
         
         return productFilter;
     } catch (error) {
         console.error('Error fetching product:', error);
-        return null; 
+        return null; // Retorna null en caso de error
     }
 }

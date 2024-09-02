@@ -8,7 +8,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
-  const [hasToken, setHasToken] = useState<boolean>(false);
+  const [hasToken, setHasToken] = useState<boolean>(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,7 +106,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
         ))}
       </div>
 
-      {!hasToken && (
+      {hasToken && (
         <AlertModal
           show={showModal}
           onClose={handleModalClose}

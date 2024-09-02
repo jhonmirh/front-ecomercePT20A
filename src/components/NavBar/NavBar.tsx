@@ -7,10 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SignOutConfirmation from '../SignOutConfirmation/SignOutConfirmation';
 import Carousel from '../Carousel/Carousel'; 
-
-interface NavBarProps {
-  images: { src: string; link: string }[];
-}
+import { NavBarProps } from './types';
 
 export default function NavBar({ images }: NavBarProps) {
   const [userSession, setUserSession] = React.useState<userSession | null>(null);
@@ -33,6 +30,7 @@ export default function NavBar({ images }: NavBarProps) {
     }
   }, []);
 
+
   const handleSignOut = () => {
     setIsModalOpen(true);
   };
@@ -40,7 +38,7 @@ export default function NavBar({ images }: NavBarProps) {
   const confirmSignOut = () => {
     localStorage.removeItem('sessionStart');
     setUserSession(null);
-    localStorage.removeItem('cart'); // Reiniciar el carrito
+    localStorage.removeItem('cart');
     window.location.href = '/';
   };
 

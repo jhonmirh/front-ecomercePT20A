@@ -39,10 +39,10 @@ export function validateRegisterLogin(values: IRegister): TRegisterError {
   
 
     if (!values.name) {
-      errors.name = "Name is required.";
+      errors.name = "Name is required."
     } else if (!/^[A-Za-z\s]+$/.test(values.name)) {
       errors.name = "Name must contain only letters.";
-    }
+    } 
   
 
     if (!values.phone) {

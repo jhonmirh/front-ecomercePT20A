@@ -1,35 +1,23 @@
 "use client";
-import { registerUser } from "@/helpers/auth.helper";
-import { validateLogin, validateRegisterLogin } from "@/helpers/validate";
-import { IRegister, TRegisterError } from "@/interfaces/LoginRegister";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { loginUser } from "@/helpers/auth.helper";
+import { validateLogin, validatePassword } from "@/helpers/validate";
+import { ILogin, ILoginError } from "@/interfaces/LoginRegister";
 import AlertModal from "../Alert/AlertModal";
 
-const Register = () => {
-  const startState: IRegister = {
-    email: "",
-    password: "",
-    name: "",
-    address: "",
-    phone: "",
-  };
+const Login = () => {
   const router = useRouter();
+  const startState: ILogin = { email: "", password: "" };
+  const [showPassword, setShowPassword] = useState(false);
+  const [dataUser, setData] = useState<ILogin>(startState);
+  const [error, setError] = useState<ILoginError>({});
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState({ title: "", message: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [dataUser, setData] = useState<IRegister>(startState);
-  const [error, setError] = useState<TRegisterError>({
-    email: "",
-    password: "",
-  });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setData({ ...dataUser, [name]: value });
   };
 
   const toggleShowPassword = () => {
@@ -38,37 +26,64 @@ const Register = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await registerUser(dataUser);
+
+    const response = await loginUser(dataUser);
     if (response.error) {
       setModalContent({
         title: "Error",
-        message: "There was an error in the Register",
+        message: "There was an error in the login",
       });
       setShowModal(true);
       return;
     }
 
+    const { token, user } = response;
+    const clearUser = {
+      id: user.id,
+      name: user.name,
+      address: user.address,
+      phone: user.phone,
+      email: user.email,
+      orders: user.orders,
+    };
+
+    localStorage.setItem(
+      "sessionStart",
+      JSON.stringify({ token, userData: clearUser })
+    );
+
     setModalContent({
-      title: "Now Login to make your purchases",
-      message: "User Created Correctly",
+      title: "Welcome! You can now shop at JhonDay",
+      message: "Successfully Logged In",
     });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    router.push("/login");
+    router.push("/");
   };
 
   useEffect(() => {
-    const validationErrors = validateRegisterLogin(dataUser);
-    setError(validationErrors);
+    const loginErrors = validateLogin(dataUser);
+
+    setError((prevErrors) => ({
+      ...prevErrors,
+      ...loginErrors,
+      email: loginErrors.email || "", // Asigna una cadena vacía si no hay error
+    }));
+
+    const passwordError = validatePassword(dataUser.password);
+    setError((prevErrors) => ({
+      ...prevErrors,
+      password: passwordError || "", // Asigna una cadena vacía si no hay error
+    }));
   }, [dataUser]);
 
   return (
     <div>
       <div className="text-center text-green-900 font-bold mb-5">
-        <h1>Register In JhonDay your Store Technology</h1>
+        <h1>Sign In To JhonDay your Store Technology</h1>
       </div>
 
       <form
@@ -92,7 +107,9 @@ const Register = () => {
             placeholder="name@xxx.com"
             required
           />
-          {error.email && <span className="text-red-600">{error.email}</span>}
+          {error.email && typeof error.email === "string" && (
+            <span className="text-red-600">{error.email}</span>
+          )}
         </div>
         <div className="mb-5 relative">
           <label
@@ -115,7 +132,7 @@ const Register = () => {
             type="button"
             onClick={toggleShowPassword}
             className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-            style={{ marginRight: "0.5rem", marginTop:"1.7rem" }} 
+            style={{ marginRight: "0.5rem", marginTop:"0.3rem" }} 
           >
             {showPassword ? (
               <svg
@@ -159,68 +176,6 @@ const Register = () => {
             <span className="text-red-600">{error.password}</span>
           )}
         </div>
-        <div className="mb-5">
-          <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-bold text-green-900 dark:text-white"
-          >
-            Your Name Complete
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={dataUser.name}
-            onChange={handleChange}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Name and second name"
-            required
-          />
-          {error.name && <span className="text-red-600">{error.name}</span>}
-        </div>
-
-        <div className="mb-5">
-          <label
-            htmlFor="phone"
-            className="block mb-2 text-sm font-bold text-green-900 dark:text-white"
-          >
-            Phone Cel
-          </label>
-          <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={dataUser.phone}
-            onChange={handleChange}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="+00000000000"
-            required
-          />
-          {error.phone && <span className="text-red-600">{error.phone}</span>}
-        </div>
-
-        <div className="mb-5">
-          <label
-            htmlFor="address"
-            className="block mb-2 text-sm font-bold text-green-900 dark:text-white"
-          >
-            Address
-          </label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={dataUser.address}
-            onChange={handleChange}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Full your Address City Street ..."
-            required
-          />
-          {error.address && (
-            <span className="text-red-600">{error.address}</span>
-          )}
-        </div>
-
         <div className="flex items-start mb-5">
           <div className="flex items-center h-5">
             <input
@@ -243,13 +198,14 @@ const Register = () => {
           className={`mb-2 text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center
     ${
       Object.values(error).some((err) => err)
-        ? "bg-gray-400 cursor-not-allowed"
+        ? "bg-gray-400 cursor-not-allowed" 
         : "bg-green-900 hover:bg-green-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    }`}
+    }`} 
         >
           Submit
         </button>
       </form>
+
       <AlertModal
         show={showModal}
         onClose={handleCloseModal}
@@ -260,4 +216,5 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
+

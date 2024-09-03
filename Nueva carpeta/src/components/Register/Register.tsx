@@ -26,10 +26,12 @@ const Register = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    
     setData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+
   };
 
   const toggleShowPassword = () => {
@@ -62,6 +64,7 @@ const Register = () => {
 
   useEffect(() => {
     const validationErrors = validateRegisterLogin(dataUser);
+   
     setError(validationErrors);
   }, [dataUser]);
 
